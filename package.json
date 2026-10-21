@@ -1,0 +1,103 @@
+{
+  "name": "@houriverrain/dsh-media-gen",
+  "version": "0.1.0",
+  "description": "DSH 生图/生视频插件：填一次 API Key，自动探测可用模型，在对话里直接出图、出片（图片内联显示，视频落盘交付）。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "scripts",
+    "test",
+    "docs",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-commands"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=22.13.0",
+    "dsh": ">=0.2.0-rc.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc.1",
+    "@deepseek-ai/schemastery": ">=3.18.1",
+    "@deepseek-ai/dsh-mcp-client": ">=0.0.1-rc.1",
+    "@deepseek-ai/dsh-credentials": ">=0.0.1-rc.1"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "@deepseek-ai/schemastery": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-mcp-client": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-credentials": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "scripts": {
+    "test": "node test/smoke.mjs && node test/host-api.test.mjs",
+    "test:smoke": "node test/smoke.mjs",
+    "test:host-api": "node test/host-api.test.mjs",
+    "test:live": "node test/smoke.mjs --live",
+    "test:live-video": "node test/smoke.mjs --live-video",
+    "verify:patches": "node test/verify-profile-patches.mjs desktop",
+    "install:local": "node scripts/link-install.mjs desktop",
+    "migrate:key": "node scripts/migrate-key-to-store.mjs",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "image-generation",
+    "video-generation",
+    "text-to-image",
+    "text-to-video",
+    "openai-compatible",
+    "dashscope",
+    "minimax-h3",
+    "qwen-image",
+    "cordis"
+  ],
+  "license": "MIT",
+  "author": "HouRIVERrain",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HouRIVERrain/dsh-media-gen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HouRIVERrain/dsh-media-gen/issues"
+  },
+  "homepage": "https://github.com/HouRIVERrain/dsh-media-gen#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}

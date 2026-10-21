@@ -1,0 +1,20 @@
+# dsh-media-gen：生图 / 生视频插件（DeepSeek Harness 插件）。
+#
+# 安装即注册：
+#   1. 设置命名空间 media-gen（DSH「设置 → 插件」里渲染成表单，用来填 API Key 与端点）
+#   2. LLM 适配器路由 media-gen（把发现的生图/生视频模型挂进模型选择器）
+#   3. 工具 media_gen_image / media_gen_video / media_list_models（不选模型也能直接用）
+#
+# 关键约束（踩过的坑，别改）：
+#   · 这条 entry 的 id **必须等于插件注册的设置命名空间名**（media-gen）。
+#     DSH 0.2.0 用 `configEditor.entries().find(row => row.options.id === ns)` 定位可写目标，
+#     再用 entry.fiber.runtime.Config 取 schema；id 与命名空间不同名时设置页永远写不进去。
+#   · 插件模块必须导出 `Config`，且至少一个字段带 `volatile` 标记，否则设置页无字段可渲染。
+#   · `name` 是加载器解析用的**包名**，必须与 package.json 的 name 完全一致。
+#     本包已发布到 npm 作用域下，因此这里是 @houriverrain/dsh-media-gen；
+#     若你用自己的作用域发布/本地 link 安装，请一并改成你的包名。
+#   · config: {} 是安全的默认值：没填 key 时插件照常加载，只是发现不到模型。
+- insert:
+    - id: media-gen
+      name: '@houriverrain/dsh-media-gen'
+      config: {}

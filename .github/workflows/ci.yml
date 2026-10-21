@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: 离线测试 (node ${{ matrix.node }} · ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        node: ['22', '24']
+        include:
+          # Windows 单独跑一遍：路径、junction、权限位这些差异只有 Windows 能暴露。
+          - os: windows-latest
+            node: '22'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: 环境信息
+        run: node -v && npm -v
+
+      # 本插件不依赖 npm 安装：运行期依赖（dsh-tools / schemastery / mcp-client）
+      # 全部由 DSH 宿主提供，缺失时插件会优雅退化，所以 CI 不需要 npm install。
+      - name: 语法检查（全部 JS）
+        shell: bash
+        run: |
+          set -e
+          for f in lib/*.js scripts/*.mjs test/*.mjs; do
+            echo "check $f"
+            node --check "$f"
+          done
+
+      - name: 离线断言（工具注册 / 配置契约 / 宿主接口 / 密钥不外泄）
+        shell: bash
+        run: |
+          node test/smoke.mjs
+          node test/host-api.test.mjs
+
+      - name: 确认打包内容不含密钥
+        shell: bash
+        run: |
+          set -e
+          if grep -rnE 'sk-[A-Za-z0-9]{16,}' lib scripts test docs README.md README.zh.md 2>/dev/null; then
+            echo "::error::疑似真实密钥进入了源码"; exit 1
+          fi
+          echo "未发现密钥特征"

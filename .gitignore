@@ -1,0 +1,30 @@
+# 依赖（DSH 宿主自带这些包，本仓库不安装它们）
+node_modules/
+.pnpm-store/
+
+# 本插件生成的产物（图片/视频），绝不该进仓库
+output/
+**/output/
+
+# 日志与临时文件
+*.log
+npm-debug.log*
+.smoke-*
+tmp/
+*.tmp
+*.bak
+*.bak-*
+
+# 密钥：任何形式的 .env / 本地覆盖配置都不要提交
+.env
+.env.*
+!.env.example
+!.env.sample
+settings.local.json
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
