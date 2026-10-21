@@ -47,6 +47,10 @@ const npmBadgeNew = `https://img.shields.io/npm/v/${encodeURIComponent(NEW)}`;
 const targets = [
   { file: 'package.json', subs: [[`"name": "${OLD}"`, `"name": "${NEW}"`]] },
   { file: 'cordis.patch.yml', subs: [[`name: '${OLD}'`, `name: '${NEW}'`], [`name: ${OLD}`, `name: ${NEW}`]] },
+  // ⚠️ 这一条是血泪换来的：客户端 bundle 里 __ModuleLoader__.load({ id }) 必须与包名一致。
+  // 漏改它会 → client-modules 失效逻辑对不上 → 同一 bundle 注册两次 → 未捕获异常 →
+  // DSH 启动失败并把 profile 重置成"无插件"（实测事故，2026-10-21）。
+  { file: 'lib/client.js', subs: [[`const BUNDLE_ID = '${OLD}'`, `const BUNDLE_ID = '${NEW}'`]] },
   { file: 'README.md', subs: [[OLD, NEW], [npmBadgeOld, npmBadgeNew]] },
   { file: 'README.zh.md', subs: [[OLD, NEW], [npmBadgeOld, npmBadgeNew]] },
   { file: 'CHANGELOG.md', subs: [[OLD, NEW]] },
